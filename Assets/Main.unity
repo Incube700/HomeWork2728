@@ -388,7 +388,7 @@ GameObject:
   m_Component:
   - component: {fileID: 437584279}
   - component: {fileID: 437584281}
-  - component: {fileID: 437584280}
+  - component: {fileID: 437584282}
   m_Layer: 0
   m_Name: WalletTester
   m_TagString: Untagged
@@ -411,19 +411,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &437584280
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 437584278}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 136bc5845df974cb4ba6fd3fcde6b901, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _wallet: {fileID: 437584281}
 --- !u!114 &437584281
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -439,6 +426,22 @@ MonoBehaviour:
   _coins: 0
   _gems: 0
   _energy: 0
+--- !u!114 &437584282
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 437584278}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b4a79b0229cfa422197370becbdc6047, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _wallet: {fileID: 437584281}
+  _coinStep: 1
+  _gemsStep: 5
+  _energyStep: 1
 --- !u!1 &832575517
 GameObject:
   m_ObjectHideFlags: 0
@@ -580,8 +583,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _wallet: {fileID: 437584281}
   _container: {fileID: 876921128}
-  _textPrefab: {fileID: 9062867830080802798, guid: 92d565a92666c426189310147f0ab177,
+  _rowPrefab: {fileID: 5247268618154635025, guid: 4fd9306ef1f694d8ba4dc1f6a92da2e8,
     type: 3}
+  _coinsIcon: {fileID: 21300000, guid: 3e945f85948ce4a0e94daca198ca2750, type: 3}
+  _gemsIcon: {fileID: 21300000, guid: 8ef24bd3c0c904bebb094c8474a861fd, type: 3}
+  _energyIcon: {fileID: 21300000, guid: 15e21429f4f664f959ba6df10f2597a1, type: 3}
 --- !u!1 &1343958133
 GameObject:
   m_ObjectHideFlags: 0

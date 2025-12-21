@@ -7,29 +7,60 @@ public class WalletDebugControls : MonoBehaviour
     [Header("Amounts")]
     [SerializeField] private int _coinStep = 1;
     [SerializeField] private int _gemsStep = 5;
-    [SerializeField] private int _energyStep = 1;
+    [SerializeField] private int _energyStep = 2;
 
     private void Update()
     {
         // Coins
         if (Input.GetKeyDown(KeyCode.Alpha1))
-            _wallet.Add(CurrencyType.Coins, _coinStep);
+            AddAndLog(CurrencyType.Coins, _coinStep);
 
         if (Input.GetKeyDown(KeyCode.Alpha2))
-            _wallet.TrySpend(CurrencyType.Coins, _coinStep);
+            SpendAndLog(CurrencyType.Coins, _coinStep);
 
         // Gems
         if (Input.GetKeyDown(KeyCode.Alpha3))
-            _wallet.Add(CurrencyType.Gems, _gemsStep);
+            AddAndLog(CurrencyType.Gems, _gemsStep);
 
         if (Input.GetKeyDown(KeyCode.Alpha4))
-            _wallet.TrySpend(CurrencyType.Gems, _gemsStep);
+            SpendAndLog(CurrencyType.Gems, _gemsStep);
 
         // Energy
         if (Input.GetKeyDown(KeyCode.Alpha5))
-            _wallet.Add(CurrencyType.Energy, _energyStep);
+            AddAndLog(CurrencyType.Energy, _energyStep);
 
         if (Input.GetKeyDown(KeyCode.Alpha6))
-            _wallet.TrySpend(CurrencyType.Energy, _energyStep);
+            SpendAndLog(CurrencyType.Energy, _energyStep);
     }
+
+    private void AddAndLog(CurrencyType type, int value)
+    {
+        int before = _wallet.GetAmount(type);
+
+        _wallet.Add(type, value);
+
+        int after = _wallet.GetAmount(type);
+        Debug.Log($"{type}: +{value} (было {before} → стало {after})");
+    }
+
+    private void SpendAndLog(CurrencyType type, int value)
+    {
+        int before = _wallet.GetAmount(type);
+
+        bool success = _wallet.TrySpend(type, value);
+
+        if (success == false)
+        {
+            int missing = value - before;
+            if (missing < 0)
+                missing = 0;
+
+            Debug.Log($"{type}: не удалось списать {value} (есть {before}, не хватает {missing})");
+            return;
+        }
+
+        int after = _wallet.GetAmount(type);
+        Debug.Log($"{type}: -{value} (было {before} → стало {after})");
+    }
+
 }

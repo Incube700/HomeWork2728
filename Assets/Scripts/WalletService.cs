@@ -51,7 +51,7 @@ public class WalletService : MonoBehaviour
             return false;
         
         SetAmount(type, current - value);
-        return false;
+        return true;
     }
 
     private void SetAmount(CurrencyType type, int newValue)
