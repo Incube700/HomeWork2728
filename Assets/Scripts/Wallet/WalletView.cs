@@ -1,10 +1,8 @@
-using System;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class WalletView : MonoBehaviour
 {
-    [SerializeField] private WalletService _wallet;
     [SerializeField] private Transform _container;
     [SerializeField] private WalletCurrencyRowView _rowPrefab;
 
@@ -13,10 +11,14 @@ public class WalletView : MonoBehaviour
     [SerializeField] private Sprite _gemsIcon;
     [SerializeField] private Sprite _energyIcon;
 
-    private readonly Dictionary<CurrencyType, WalletCurrencyRowView> _rows = new Dictionary<CurrencyType, WalletCurrencyRowView>();
+    private WalletService _wallet;
+    private readonly Dictionary<CurrencyType, WalletCurrencyRowView> _rows =
+        new Dictionary<CurrencyType, WalletCurrencyRowView>();
 
-    private void Start()
+    public void Construct(WalletService wallet)
     {
+        _wallet = wallet;
+
         BuildUI();
         RefreshAll();
     }
@@ -37,7 +39,11 @@ public class WalletView : MonoBehaviour
     {
         _rows.Clear();
 
-        foreach (CurrencyType type in Enum.GetValues(typeof(CurrencyType)))
+        // подчистим контейнер, чтобы не плодить дубли при перезапуске/сценах
+        for (int i = _container.childCount - 1; i >= 0; i--)
+            Destroy(_container.GetChild(i).gameObject);
+
+        foreach (CurrencyType type in _wallet.GetCurrencies())
         {
             WalletCurrencyRowView row = Instantiate(_rowPrefab, _container);
             row.Setup(type, GetIcon(type));
@@ -48,18 +54,14 @@ public class WalletView : MonoBehaviour
 
     private void RefreshAll()
     {
-        foreach (CurrencyType type in Enum.GetValues(typeof(CurrencyType)))
-        {
+        foreach (CurrencyType type in _wallet.GetCurrencies())
             OnCurrencyChanged(type, _wallet.GetAmount(type));
-        }
     }
 
     private void OnCurrencyChanged(CurrencyType type, int newValue)
     {
         if (_rows.TryGetValue(type, out WalletCurrencyRowView row))
-        {
             row.SetAmount(newValue);
-        }
     }
 
     private Sprite GetIcon(CurrencyType type)

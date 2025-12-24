@@ -2,10 +2,18 @@ using UnityEngine;
 
 public class WalletExampleInput : MonoBehaviour
 {
-    [SerializeField] private WalletService _wallet;
+    private WalletService _wallet;
+
+    public void Construct(WalletService wallet)
+    {
+        _wallet = wallet;
+    }
 
     private void Update()
     {
+        if (_wallet == null)
+            return;
+
         if (Input.GetKeyDown(KeyCode.Alpha1))
             _wallet.Add(CurrencyType.Coins, 1);
 
@@ -18,12 +26,14 @@ public class WalletExampleInput : MonoBehaviour
 
     private void OnEnable()
     {
-        _wallet.CurrencyChanged += OnCurrencyChanged;
+        if (_wallet != null)
+            _wallet.CurrencyChanged += OnCurrencyChanged;
     }
 
     private void OnDisable()
     {
-        _wallet.CurrencyChanged -= OnCurrencyChanged;
+        if (_wallet != null)
+            _wallet.CurrencyChanged -= OnCurrencyChanged;
     }
 
     private void OnCurrencyChanged(CurrencyType type, int newValue)

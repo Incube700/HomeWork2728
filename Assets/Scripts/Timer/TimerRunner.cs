@@ -2,15 +2,16 @@ using UnityEngine;
 
 public class TimerRunner : MonoBehaviour
 {
-    public TimerService Timer { get; private set; }
+    private TimerService _timer;
 
-    private void Awake()
+    public void Construct(TimerService timer)
     {
-        Timer = new TimerService();
+        _timer = timer;
     }
 
     private void Update()
     {
-        Timer.Tick(Time.deltaTime);
+        if (_timer != null)
+            _timer.Tick(Time.deltaTime);
     }
 }

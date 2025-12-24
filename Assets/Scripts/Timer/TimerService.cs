@@ -2,27 +2,29 @@ using System;
 
 public class TimerService
 {
-    public event Action<float> NormalizedChanged; //0,,1
-    public event Action<int> SecondsLeftChanged; //для сердечек
+    // базовое событие: сколько осталось и какая длительность
+    public event Action<float, float> TimeChanged;
     public event Action Finished;
 
     private float _duration;
     private float _timeLeft;
-    
+
     private bool _isRunning;
     public bool IsRunning => _isRunning;
-   
 
-    private int _lastSeconds;
+    public float Duration => _duration;
+    public float TimeLeft => _timeLeft;
 
     public void Start(float seconds)
     {
+        if (seconds <= 0f)
+            return;
+
         _duration = seconds;
         _timeLeft = seconds;
         _isRunning = true;
 
-        _lastSeconds = GetSecondsLeft();
-        SendAll();
+        SendTimeChanged();
     }
 
     public void Stop()
@@ -39,13 +41,12 @@ public class TimerService
     public void Reset()
     {
         _timeLeft = _duration;
-        _lastSeconds = GetSecondsLeft();
-        SendAll();
+        SendTimeChanged();
     }
 
     public void Tick(float deltaTime)
     {
-        if (!_isRunning)
+        if (_isRunning == false)
             return;
 
         _timeLeft -= deltaTime;
@@ -54,40 +55,17 @@ public class TimerService
         {
             _timeLeft = 0f;
             _isRunning = false;
-            
-            SendAll();
+
+            SendTimeChanged();
             Finished?.Invoke();
             return;
         }
 
-        SendChanged();
+        SendTimeChanged();
     }
 
-    private void SendAll()
+    private void SendTimeChanged()
     {
-        NormalizedChanged?.Invoke(GetNormalized());
-        SecondsLeftChanged?.Invoke(GetSecondsLeft());
-    }
-
-    private void SendChanged()
-    {
-        NormalizedChanged?.Invoke(GetNormalized());
-
-        var seconds = GetSecondsLeft();
-        if (seconds != _lastSeconds)
-        {
-            _lastSeconds = seconds;
-            SecondsLeftChanged?.Invoke(seconds);
-        }
-    }
-
-    private float GetNormalized()
-    {
-        return _duration <= 0f ? 0f : _timeLeft / _duration; // убыввает 1>0
-    }
-
-    private int GetSecondsLeft()
-    {
-        return (int)Math.Ceiling(_timeLeft);
+        TimeChanged?.Invoke(_timeLeft, _duration);
     }
 }

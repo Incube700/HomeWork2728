@@ -2,16 +2,17 @@ using UnityEngine;
 
 public class EnemyDestroyerRunner : MonoBehaviour
 {
-    public EnemyDestroyerService Service { get; private set; }
+    private EnemyDestroyerService _service;
 
-    private void Awake()
+    public void Construct(EnemyDestroyerService service)
     {
-        Service = new EnemyDestroyerService(DestroyEnemy);
+        _service = service;
     }
 
     private void Update()
     {
-        Service.Tick();
+        if (_service != null)
+            _service.Tick();
     }
 
     private void DestroyEnemy(Enemy enemy)

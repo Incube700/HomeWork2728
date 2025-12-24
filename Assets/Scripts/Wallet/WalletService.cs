@@ -1,35 +1,42 @@
 using System;
-using UnityEngine;
+using System.Collections.Generic;
 
-public class WalletService : MonoBehaviour
+public class WalletService
 {
-    // Событие - меняем валюту
-    //1 - тип валюты 
-    //2 - новое количество 
-
     public event Action<CurrencyType, int> CurrencyChanged;
 
-    [SerializeField] private int _coins;
-    [SerializeField] private int _gems;
-    [SerializeField] private int _energy;
+    private readonly Dictionary<CurrencyType, int> _amounts;
+
+    public WalletService()
+    {
+        _amounts = new Dictionary<CurrencyType, int>
+        {
+            { CurrencyType.Coins, 0 },
+            { CurrencyType.Gems, 0 },
+            { CurrencyType.Energy, 0 }
+        };
+    }
+
+    // Если захочешь стартовые значения
+    public WalletService(Dictionary<CurrencyType, int> startAmounts)
+    {
+        _amounts = new Dictionary<CurrencyType, int>();
+
+        foreach (var pair in startAmounts)
+            _amounts[pair.Key] = pair.Value;
+    }
+
+    public IEnumerable<CurrencyType> GetCurrencies()
+    {
+        return _amounts.Keys;
+    }
 
     public int GetAmount(CurrencyType type)
     {
-        //вернём значние по типу 
-        switch (type)
-        {
-            case CurrencyType.Coins:
-                return _coins;
+        if (_amounts.TryGetValue(type, out int value))
+            return value;
 
-            case CurrencyType.Gems:
-                return _gems;
-
-            case CurrencyType.Energy:
-                return _energy;
-
-            default:
-                return 0;
-        }
+        return 0;
     }
 
     public void Add(CurrencyType type, int value)
@@ -42,38 +49,25 @@ public class WalletService : MonoBehaviour
 
     public bool TrySpend(CurrencyType type, int value)
     {
+        // фикс по замечанию: value <= 0 не должно считаться успехом
         if (value <= 0)
-            return true;
+            return false;
 
         int current = GetAmount(type);
 
         if (current < value)
             return false;
-        
+
         SetAmount(type, current - value);
         return true;
     }
 
     private void SetAmount(CurrencyType type, int newValue)
     {
+        if (_amounts.ContainsKey(type) == false)
+            _amounts.Add(type, 0);
 
-
-        //записываем новое значение в нужное поле
-        switch (type)
-        {
-            case CurrencyType.Coins:
-                _coins = newValue;
-                break;
-            
-            case CurrencyType.Gems:
-                _gems = newValue;
-                break;
-            
-            case CurrencyType.Energy:
-                _energy = newValue;
-                break;
-        }
-        
+        _amounts[type] = newValue;
         CurrencyChanged?.Invoke(type, newValue);
     }
 }

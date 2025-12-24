@@ -2,15 +2,23 @@ using UnityEngine;
 
 public class WalletDebugControls : MonoBehaviour
 {
-    [SerializeField] private WalletService _wallet;
-
     [Header("Amounts")]
     [SerializeField] private int _coinStep = 1;
     [SerializeField] private int _gemsStep = 5;
     [SerializeField] private int _energyStep = 2;
 
+    private WalletService _wallet;
+
+    public void Construct(WalletService wallet)
+    {
+        _wallet = wallet;
+    }
+
     private void Update()
     {
+        if (_wallet == null)
+            return;
+
         // Coins
         if (Input.GetKeyDown(KeyCode.Alpha1))
             AddAndLog(CurrencyType.Coins, _coinStep);
@@ -62,5 +70,4 @@ public class WalletDebugControls : MonoBehaviour
         int after = _wallet.GetAmount(type);
         Debug.Log($"{type}: -{value} (было {before} → стало {after})");
     }
-
 }
